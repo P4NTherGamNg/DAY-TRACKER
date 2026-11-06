@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="si"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RedM Day Tracker</title>
+<style>
+:root{--bg:#f4ede1;--card:#fffaf0;--ink:#2b1d14;--mut:#7a6552;--acc:#a8321f;--line:#e0d2bb;--ok:#2f7d3a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1511;--card:#271d17;--ink:#f3e6d3;--mut:#b49c83;--acc:#e5654b;--line:#3d2f25;--ok:#6cc27a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1511;--card:#271d17;--ink:#f3e6d3;--mut:#b49c83;--acc:#e5654b;--line:#3d2f25;--ok:#6cc27a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;justify-content:center;padding:22px 14px}
+.w{width:100%;max-width:960px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+h1{font:700 24px Georgia,serif;margin:0}
+.tabs{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:16px}
+.tabs button{flex:none;background:transparent;color:var(--mut);padding:8px 16px}
+.tabs button.on{background:var(--acc);color:#fff}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.col{min-width:0}
+@media(max-width:760px){.g{grid-template-columns:1fr}h1{font-size:20px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.sec+.sec{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.t{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.9px;margin:0 0 10px}
+.m{color:var(--mut);font-size:14px}.sm{font-size:13px;margin-top:4px}
+input,select{box-sizing:border-box;width:100%;padding:11px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font-size:16px}
+.tm{display:flex;gap:6px;align-items:center}.tm input{flex:1;min-width:0;text-align:center}.tm b{color:var(--mut)}
+.r2{display:grid;grid-template-columns:1.3fr 1fr;gap:8px}
+.row{display:flex;gap:8px;margin-top:12px}
+button{flex:1;padding:11px 14px;border:0;border-radius:9px;background:var(--acc);color:#fff;font:600 14px system-ui,sans-serif;cursor:pointer}
+button.s{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button:active{transform:translateY(1px)}
+#cn{flex:none;padding:11px 26px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pill{flex:none;min-width:64px;padding:8px 14px;border-radius:999px}
+.pill.on{background:var(--ok);color:#fff;border-color:var(--ok)}
+.day{font:700 46px Georgia,serif;color:var(--acc);margin:2px 0 0}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:14px 0 8px}.bar i{display:block;height:100%;background:var(--acc);width:0}
+.kv{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.kv:last-child{border:0}
+.kv.sun{color:var(--acc);font-weight:700}
+.chips{display:flex;gap:4px;margin-top:14px}.chips span{flex:1;text-align:center;font-size:12px;padding:6px 0;border-radius:6px;border:1px solid var(--line);color:var(--mut)}.chips span.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.err{color:var(--acc);font-size:13px;min-height:16px;margin-top:6px}
+.ph{text-align:center;color:var(--mut);padding:34px 18px}
+#p3{max-width:480px}
+[hidden]{display:none!important}
+</style></head><body><div class="w">
+
+<div class="hd"><h1>RedM Game Day Tracker</h1><button id="cn">Connect</button></div>
+<div class="tabs"><button id="t1" class="on">Restart Tracker</button><button id="t2">Week Planner</button><button id="t3">Settings</button></div>
+
+<div id="p1"><div class="g">
+<div class="col">
+  <div class="card"><div class="top"><div><div class="t" style="margin:0">Auto restart detect</div><div class="m sm" id="as">Players 0 una welawa restart time eka assign wenawa.</div></div><button id="ab" class="s pill">OFF</button></div></div>
+  <div class="card">
+    <div class="sec"><div class="t">Server restart date / time (24h)</div>
+      <div class="r2"><input type="date" id="rd"><div class="tm"><input type="number" id="rh" min="0" max="23" placeholder="HH"><b>:</b><input type="number" id="rm" min="0" max="59" placeholder="MM"></div></div>
+      <div class="row"><button id="now">Dan restart una</button><button class="s" id="clr">Clear</button></div>
+      <div class="err" id="e1"></div></div>
+    <div class="sec"><div class="t">TeamSpeak uptime</div>
+      <div class="tm"><input type="number" id="ud" min="0" placeholder="Days"><b>:</b><input type="number" id="uh" min="0" max="23" placeholder="HH"><b>:</b><input type="number" id="um" min="0" max="59" placeholder="MM"></div>
+      <div class="row"><button id="ub">Uptime eken assign karanna</button></div>
+      <div class="err" id="eu"></div></div>
+    <div class="sec"><div class="t">Calibrate: dan game eke time (24h)</div>
+      <div class="tm"><input type="number" id="ch" min="0" max="23" placeholder="HH"><b>:</b><input type="number" id="cm" min="0" max="59" placeholder="MM"></div>
+      <div class="row"><button id="cal">Time eka set karanna</button><button class="s" id="rst">Reset (00:00)</button></div></div>
+  </div>
+</div>
+<div class="col">
+  <div class="card ph" id="h1">Restart time eka assign karanna.<br>Dan game day eka methana pennanawa.</div>
+  <div class="card" id="o1" hidden><div class="t">Dan game day eka</div><p class="day" id="dn"></p>
+    <div class="m" id="gt"></div><div class="bar"><i id="pb"></i></div><div class="m" id="left"></div></div>
+  <div class="card" id="n1" hidden><div class="t">Ilanga dawas (real time, 24h)</div><div id="l1"></div></div>
+</div>
+</div></div>
+
+<div id="p2" hidden><div class="g">
+<div class="col"><div class="card">
+  <div class="sec"><div class="t">Dan game eke day eka</div>
+    <select id="pd"><option value="">Select day</option><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select></div>
+  <div class="sec"><div class="t">Dan game eke time (24h)</div>
+    <div class="tm"><input type="number" id="ph" min="0" max="23" placeholder="HH"><b>:</b><input type="number" id="pm" min="0" max="59" placeholder="MM"></div>
+    <div class="row"><button id="pset">Calculate</button><button class="s" id="pclr">Clear</button></div>
+    <div class="err" id="e2"></div></div>
+</div></div>
+<div class="col">
+  <div class="card ph" id="h2">Day saha time dala Calculate click karanna.</div>
+  <div class="card" id="o2" hidden><div class="t">Dan game day / time</div><p class="day" id="pw"></p>
+    <div class="m" id="pdt"></div><div class="chips" id="chips"></div><div class="m" id="pwk" style="margin-top:12px"></div></div>
+  <div class="card" id="n2" hidden><div class="t">Ilanga game dawas 14 (real time, 24h)</div><div id="l2"></div></div>
+</div>
+</div></div>
+
+<div id="p3" hidden><div class="card">
+  <div class="sec"><div class="t">Game day length (real minutes)</div><input type="number" id="dl" min="1" step="0.5"></div>
+  <div class="sec"><div class="t">Auto detect API link (fivesearch)</div><input type="text" id="au"></div>
+  <div class="sec"><div class="t">RedM connect (cfx.re/join/code nathnam IP:port)</div><input type="text" id="rt"></div>
+  <div class="m sm" style="margin-top:16px">Me settings okkoma tab okkomatama apply wenawa, saha save wenawa.</div>
+</div></div>
+
+</div>
+<script>
+var N=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var S={rt:"cfx.re/join/qe3bl6",auto:false,au:"https://fivesearch.net/api/v1/servers/qe3bl6",act:false,dl:45,rd:"",rh:"",rm:"",off:0,pd:"",ph:"",pm:"",anc:0,ag:0};
+try{var j=JSON.parse(localStorage.getItem("redm3"));if(j)S=Object.assign(S,j)}catch(e){}
+if(String(S.pd).length>1){S.anc=0;S.pd=""}
+function sv(){try{localStorage.setItem("redm3",JSON.stringify(S))}catch(e){}}
+function $(i){return document.getElementById(i)}
+function p2(n){return String(n).padStart(2,"0")}
+function DAY(){return S.dl*60000}
+function mm(ms){var s=Math.max(0,Math.floor(ms/1000));return p2(Math.floor(s/60))+":"+p2(s%60)}
+function hms(d){return p2(d.getHours())+":"+p2(d.getMinutes())+":"+p2(d.getSeconds())}
+function rdate(d){return d.getDate()+" "+MO[d.getMonth()]}
+function nv(i){var v=$(i).value;return v===""?NaN:+v}
+function fill(){$("rt").value=S.rt;$("au").value=S.au;$("dl").value=S.dl;$("rd").value=S.rd;$("rh").value=S.rh;$("rm").value=S.rm;$("pd").value=S.pd;$("ph").value=S.ph;$("pm").value=S.pm}
+function start1(){if(!S.rd||S.rh===""||S.rm==="")return NaN;return new Date(S.rd+"T"+p2(S.rh)+":"+p2(S.rm)).getTime()}
+function setRestart(dt){S.rd=dt.getFullYear()+"-"+p2(dt.getMonth()+1)+"-"+p2(dt.getDate());S.rh=dt.getHours();S.rm=dt.getMinutes();sv();fill();tick()}
+function sh1(on){$("o1").hidden=$("n1").hidden=!on;$("h1").hidden=on}
+function sh2(on){$("o2").hidden=$("n2").hidden=!on;$("h2").hidden=on}
+function tick1(){
+  var st=start1(),now=Date.now();$("e1").textContent="";
+  if(isNaN(st)){sh1(false);return}
+  if(st>now){$("e1").textContent="Restart time eka anagathe thiyenawa.";sh1(false);return}
+  var tot=(now-st)/DAY()*1440+S.off,idx=Math.floor(tot/1440),fr=(tot%1440)/1440,gm=Math.floor(fr*1440);
+  $("dn").textContent=N[idx%7];
+  $("gt").textContent="Game day #"+(idx+1)+" · Game time "+p2(Math.floor(gm/60))+":"+p2(gm%60);
+  $("pb").style.width=(fr*100).toFixed(1)+"%";
+  $("left").textContent="Ilanga dawasata (real): "+mm((1-fr)*DAY());
+  var h="";for(var i=1;i<=7;i++){var t=new Date(st+((idx+i)*1440-S.off)/1440*DAY());h+='<div class="kv"><span>'+N[(idx+i)%7]+'</span><b>'+hms(t)+'</b></div>'}
+  $("l1").innerHTML=h;sh1(true);
+}
+function tick2(){
+  if(!S.anc){sh2(false);return}
+  var now=Date.now(),g=S.ag+(now-S.anc)/DAY()*1440,d0=Math.floor(g/1440),gm=Math.floor(g%1440),wd=((d0%7)+7)%7;
+  $("pw").textContent=N[wd];
+  $("pdt").textContent="Game time "+p2(Math.floor(gm/60))+":"+p2(gm%60);
+  var c="";for(var k=0;k<7;k++)c+='<span class="'+(k==wd?"on":"")+'">'+N[k].slice(0,3)+'</span>';$("chips").innerHTML=c;
+  var toSun=wd==0?7:7-wd,wk=((d0+toSun)*1440-g)/1440*DAY();
+  $("pwk").textContent="Aluth week eka (Sunday) patan ganna: "+Math.floor(wk/3600000)+"h "+p2(Math.floor(wk/60000)%60)+"m ("+hms(new Date(now+wk))+")";
+  var h="";for(var i=1;i<=14;i++){var ds=(d0+i)*1440,t=new Date(now+(ds-g)/1440*DAY()),w=(wd+i)%7;
+    h+='<div class="kv'+(w==0?" sun":"")+'"><span>'+N[w]+(w==0?" · New week":"")+'</span><b>'+(t.toDateString()==new Date().toDateString()?"":rdate(t)+" ")+hms(t)+'</b></div>'}
+  $("l2").innerHTML=h;sh2(true);
+}
+function tick(){tick1();tick2()}
+function tab(n){$("p1").hidden=n!=1;$("p2").hidden=n!=2;$("p3").hidden=n!=3;["t1","t2","t3"].forEach(function(id,i){$(id).className=i+1==n?"on":""})}
+$("t1").onclick=function(){tab(1)};$("t2").onclick=function(){tab(2)};$("t3").onclick=function(){tab(3)};
+$("dl").oninput=function(){var v=parseFloat($("dl").value);if(v>0){S.dl=v;sv();tick()}};
+["rd","rh","rm"].forEach(function(i){$(i).oninput=function(){S[i]=$(i).value;sv();tick()}});
+["rt","au"].forEach(function(i){$(i).oninput=function(){S[i]=$(i).value;sv()}});
+$("now").onclick=function(){setRestart(new Date())};
+$("clr").onclick=function(){S.rd=S.rh=S.rm="";sv();fill();tick()};
+$("cal").onclick=function(){var h=nv("ch"),m=nv("cm"),st=start1();
+  if(isNaN(h)||isNaN(m)||isNaN(st)){$("e1").textContent="Restart time saha game time dapan.";return}
+  var el=(Date.now()-st)/DAY()*1440;S.off=(((h*60+m-el)%1440)+1440)%1440;sv();tick()};
+$("rst").onclick=function(){S.off=0;sv();tick()};
+$("pset").onclick=function(){var h=nv("ph"),m=nv("pm"),d=$("pd").value;
+  if(!d||isNaN(h)||isNaN(m)||h<0||h>23||m<0||m>59){$("e2").textContent="Day saha time (24h) dapan.";return}
+  $("e2").textContent="";S.pd=d;S.ph=h;S.pm=m;S.ag=(+d)*1440+h*60+m;S.anc=Date.now();sv();tick()};
+$("pclr").onclick=function(){S.anc=0;S.pd=S.ph=S.pm="";sv();fill();tick()};
+$("ub").onclick=function(){
+  var d=nv("ud"),h=nv("uh"),m=nv("um");d=isNaN(d)?0:d;
+  if(isNaN(h)||isNaN(m)){$("eu").textContent="Uptime eke HH saha MM dapan (Days nathnam 0).";return}
+  var dt=new Date(Date.now()-((d*24+h)*60+m)*60000);setRestart(dt);
+  $("eu").textContent="Restart time eka: "+rdate(dt)+" "+p2(dt.getHours())+":"+p2(dt.getMinutes());
+};
+$("cn").onclick=function(){
+  var rt=String(S.rt).trim().replace(/^https?:\/\//,"").replace(/^redm:\/\/connect\//,"");
+  if(!rt)return;
+  var a=document.createElement("a");a.href="redm://connect/"+rt;a.style.display="none";document.body.appendChild(a);a.click();a.remove();
+};
+var busy=false;
+function ast(t){$("as").textContent=t}
+function abtn(){$("ab").textContent=S.auto?"ON":"OFF";$("ab").className="pill "+(S.auto?"on":"s")}
+function poll(){
+  if(!S.auto||busy)return;busy=true;
+  var c=new AbortController(),to=setTimeout(function(){c.abort()},10000);
+  fetch(S.au,{cache:"no-store",signal:c.signal}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+    clearTimeout(to);busy=false;
+    var n=+d.players,on=d.online!==false,zero=!on||n===0,now=Date.now();
+    var t=new Date(d.updatedAt).getTime();if(isNaN(t)||t>now||now-t>300000)t=now;
+    var msg="Players "+n+"/"+d.maxPlayers+" · "+(on?"online":"offline")+" · checked "+hms(new Date());
+    if(zero&&(S.act||!S.rd)){var dt=new Date(t);S.act=false;setRestart(dt);msg="Restart detect una: "+p2(dt.getHours())+":"+p2(dt.getMinutes())+" · "+msg}
+    else if(!zero&&!S.act){S.act=true;sv()}
+    ast(msg);
+  }).catch(function(e){clearTimeout(to);busy=false;ast("API access fail una ("+e.message+"). Download karapu file eken try karanna.")});
+}
+$("ab").onclick=function(){S.auto=!S.auto;sv();abtn();if(S.auto){ast("Check karanawa...");poll()}else ast("Auto detect off.")};
+abtn();setInterval(poll,30000);if(S.auto)poll();
+fill();tick();setInterval(tick,1000);
+</script></body></html>
